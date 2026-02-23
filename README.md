@@ -2,6 +2,20 @@
 
 Modern ZSH dotfiles for Fedora — starship, eza, bat, fzf, atuin and more.
 
+## Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/khiladisngh/dotfiles/main/install.sh | sudo bash
+```
+
+No cloning required. The script downloads everything it needs automatically.
+
+To overwrite existing config files:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/khiladisngh/dotfiles/main/install.sh | sudo bash -s -- --force
+```
+
 <!-- screenshot placeholder -->
 
 ## What's included
@@ -35,6 +49,14 @@ Already installed on most Fedora systems: `bat`, `fd-find`, `ripgrep`, `fzf`, `z
 
 ## Quick install
 
+**One-liner (no clone needed):**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/khiladisngh/dotfiles/main/install.sh | sudo bash
+```
+
+**Or clone and run:**
+
 ```bash
 git clone https://github.com/khiladisngh/dotfiles.git ~/Dev/repos/dotfiles
 cd ~/Dev/repos/dotfiles
@@ -48,13 +70,13 @@ Then log out and back in (or run `exec zsh`) to start using the new shell.
 By default the installer **skips** `.zshrc` and `starship.toml` if they already exist, so it's safe to re-run to update tools:
 
 ```bash
-sudo bash install.sh
+curl -fsSL https://raw.githubusercontent.com/khiladisngh/dotfiles/main/install.sh | sudo bash
 ```
 
-To also overwrite config files:
+To also overwrite config files, pass `--force` via `-s --`:
 
 ```bash
-sudo bash install.sh --force
+curl -fsSL https://raw.githubusercontent.com/khiladisngh/dotfiles/main/install.sh | sudo bash -s -- --force
 ```
 
 ## Repo structure

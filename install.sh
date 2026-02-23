@@ -1,13 +1,25 @@
 #!/bin/bash
 # ============================================================
 # Modern Shell Setup — Fedora 43
-# Run: sudo bash install.sh [--force]
+# Run via pipe:  curl -fsSL https://raw.githubusercontent.com/khiladisngh/dotfiles/main/install.sh | sudo bash
+# Run via clone: sudo bash install.sh [--force]
 #
 # --force   Overwrite existing .zshrc / starship.toml
 # ============================================================
 set -uo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd 2>/dev/null)" || SCRIPT_DIR=""
+
+# ── Self-bootstrap when run via pipe ─────────────────────────
+# If the config files aren't next to this script (e.g. curl | sudo bash),
+# download the full repo tarball and re-exec from there.
+if [[ ! -f "$SCRIPT_DIR/zshrc" ]]; then
+    echo "[INFO] Running from pipe — downloading dotfiles repo..."
+    DOTFILES_TMP=$(mktemp -d)
+    curl -fsSL "https://github.com/khiladisngh/dotfiles/archive/refs/heads/main.tar.gz" \
+        | tar -xz -C "$DOTFILES_TMP" --strip-components=1
+    exec bash "$DOTFILES_TMP/install.sh" "$@"
+fi
 
 FORCE=false
 [[ "${1:-}" == "--force" ]] && FORCE=true
