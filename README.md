@@ -1,6 +1,6 @@
 # dotfiles
 
-Modern ZSH dotfiles for Fedora — starship, eza, bat, fzf, atuin and more.
+Modern ZSH dotfiles for Fedora & Ubuntu — starship, eza, bat, fzf, atuin and more.
 
 ## Install
 
@@ -41,11 +41,13 @@ curl -fsSL https://raw.githubusercontent.com/khiladisngh/dotfiles/main/install.s
 
 ## Prerequisites
 
-- **Fedora 40+** (tested on Fedora 43)
+- **Fedora 40+** (tested on Fedora 43) or **Ubuntu 22.04 LTS / 24.04 LTS**
 - **A [Nerd Font](https://www.nerdfonts.com/)** installed and set as your terminal font (required for icons)
   - Recommended: `FiraCode Nerd Font`, `JetBrainsMono Nerd Font`, or `CascadiaCode Nerd Font`
 
 Already installed on most Fedora systems: `bat`, `fd-find`, `ripgrep`, `fzf`, `zoxide`, `btop`
+
+On Ubuntu, the installer handles all package installs automatically — nothing needs to be pre-installed.
 
 ## Quick install
 
@@ -92,8 +94,10 @@ dotfiles/
 
 ## What `install.sh` does
 
-1. Installs system packages via DNF: `zsh`, `git-delta`, `atuin`, `duf`, `procs`, `zsh-autosuggestions`, `zsh-syntax-highlighting`
-2. Installs `tealdeer` (DNF or GitHub binary fallback)
+1. Detects distro and installs packages via DNF (Fedora) or APT (Ubuntu): `zsh`, `duf`, `zsh-autosuggestions`, `zsh-syntax-highlighting`, and more
+   - **Ubuntu only**: also installs `ripgrep`, `fzf`, `zoxide`, `btop`, `bat`, `fd-find` via APT; creates `~/.local/bin/bat` and `~/.local/bin/fd` symlinks (Ubuntu renames these binaries)
+   - **Ubuntu only**: installs `atuin` via official script, `procs` and `git-delta` via GitHub `.deb` releases
+2. Installs `tealdeer` (package manager or GitHub binary fallback)
 3. Installs `starship` prompt
 4. Installs `eza` from GitHub releases
 5. Installs `lazygit` from GitHub releases

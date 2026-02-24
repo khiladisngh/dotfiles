@@ -23,6 +23,8 @@ setopt AUTO_PUSHD               # cd pushes to dir stack (use popd / dirs)
 
 # ── Path ────────────────────────────────────────────────────
 export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$PATH"
+# atuin installed via official script puts binary in ~/.atuin/bin (Ubuntu/offline)
+[[ -f "$HOME/.atuin/bin/env" ]] && . "$HOME/.atuin/bin/env"
 
 # ── Completion ──────────────────────────────────────────────
 autoload -Uz compinit && compinit
@@ -185,8 +187,11 @@ fi
 # FZF — Fuzzy finder
 # ============================================================
 if command -v fzf &>/dev/null; then
+    # fzf key bindings — Fedora path, then Ubuntu/Debian path
     [[ -f /usr/share/fzf/shell/key-bindings.zsh ]] && \
         source /usr/share/fzf/shell/key-bindings.zsh
+    [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]] && \
+        source /usr/share/doc/fzf/examples/key-bindings.zsh
 
     export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -319,16 +324,29 @@ if command -v lazygit &>/dev/null; then
 fi
 
 # ============================================================
-# DNF — Package management
+# Package management (auto-detected)
 # ============================================================
-alias dni='sudo dnf install -y'
-alias dnr='sudo dnf remove -y'
-alias dnu='sudo dnf upgrade -y'
-alias dns='dnf search'
-alias dninfo='dnf info'
-alias dnl='dnf list installed'
-alias dnlu='dnf list updates'
-alias dnc='sudo dnf autoremove -y && sudo dnf clean all'        # cleanup
+if command -v dnf &>/dev/null; then
+    # Fedora / RPM-based
+    alias dni='sudo dnf install -y'
+    alias dnr='sudo dnf remove -y'
+    alias dnu='sudo dnf upgrade -y'
+    alias dns='dnf search'
+    alias dninfo='dnf info'
+    alias dnl='dnf list installed'
+    alias dnlu='dnf list updates'
+    alias dnc='sudo dnf autoremove -y && sudo dnf clean all'
+elif command -v apt &>/dev/null; then
+    # Ubuntu / Debian
+    alias apti='sudo apt install -y'
+    alias aptr='sudo apt remove -y'
+    alias aptu='sudo apt update && sudo apt upgrade -y'
+    alias apts='apt search'
+    alias aptinfo='apt show'
+    alias aptl='apt list --installed 2>/dev/null'
+    alias aptlu='apt list --upgradable 2>/dev/null'
+    alias aptc='sudo apt autoremove -y && sudo apt clean'
+fi
 
 # ============================================================
 # Navigation
@@ -482,9 +500,11 @@ tmpcd() {
     cd "$dir"
 }
 
-# Copy file contents to clipboard (Wayland/X11)
+# Copy file contents to clipboard (WSL/Wayland/X11)
 clip() {
-    if command -v wl-copy &>/dev/null; then
+    if [[ -n "${WSL_DISTRO_NAME:-}" ]] && command -v clip.exe &>/dev/null; then
+        cat "$1" | clip.exe && echo "Copied to clipboard (WSL)"
+    elif command -v wl-copy &>/dev/null; then
         cat "$1" | wl-copy && echo "Copied to clipboard (Wayland)"
     elif command -v xclip &>/dev/null; then
         cat "$1" | xclip -selection clipboard && echo "Copied to clipboard (X11)"
